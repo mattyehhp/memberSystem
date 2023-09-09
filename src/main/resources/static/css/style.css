@@ -1,0 +1,16 @@
+
+
+.sign-up-label, .log-in-label {
+    font-size: 40px;
+    font-family: ans-serif;
+}
+
+.sign-up, .log-in {
+    background-color: #283618;
+    color: #fefae0;
+    border-radius: 15px;
+}
+
+a:link {
+    color: #fefae0;
+}
