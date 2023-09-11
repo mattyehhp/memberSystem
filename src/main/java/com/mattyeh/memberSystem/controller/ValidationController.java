@@ -1,6 +1,8 @@
 package com.mattyeh.memberSystem.controller;
 
+import com.google.code.kaptcha.Constants;
 import com.mattyeh.memberSystem.service.ValidationService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,17 +45,27 @@ public class ValidationController {
 
 
     @PostMapping("/checkValidation")
-    public @ResponseBody Map<String, Integer> checkValidation(@RequestParam String password, @RequestParam String email, @RequestParam String memberName) {
+    public @ResponseBody Map<String, Integer> checkValidation(@RequestParam String password, @RequestParam String email, @RequestParam String memberName, HttpSession httpSession, @RequestParam String kaptcha) {
         Integer isPasswordValid = validationService.isPasswordValid(password);
         Integer isMemberNameValid = validationService.isMemberNameValid(memberName);
         Integer isEmailValid = validationService.isEmailValid(email);
+        Map<String, Integer> result = new HashMap<>();
+
+        //verify code
+        String verifyCode = (String)httpSession.getAttribute(Constants.KAPTCHA_SESSION_KEY);
+        if (!verifyCode.equals(kaptcha)) {
+            result.put("isVerifyCodeCorrect", 0);
+        } else {
+            result.put("isVerifyCodeCorrect", 1);
+        }
+
 
         Integer isMemberValid = 0;
         Integer checkState = isMemberNameValid + isPasswordValid + isEmailValid;
         if (checkState == 3) {
             isMemberValid = 1;
         }
-        Map<String, Integer> result = new HashMap<>();
+
         result.put("isPasswordValid", isPasswordValid);
         result.put("isMemberNameValid", isMemberNameValid);
         result.put("isEmailValid", isEmailValid);

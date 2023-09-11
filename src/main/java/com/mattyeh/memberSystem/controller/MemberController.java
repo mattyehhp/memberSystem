@@ -21,11 +21,8 @@ public class MemberController {
 
     @PostMapping("/member")
     @ResponseStatus(HttpStatus.CREATED)
-    public @ResponseBody String signUpMember(@RequestParam String email, @RequestParam String memberName, @RequestParam String password, @RequestParam String kaptcha, HttpSession httpSession) {
-        String verifyCode = (String)httpSession.getAttribute(Constants.KAPTCHA_SESSION_KEY);
-        if (!verifyCode.equals(kaptcha)) {
-            return "failed";
-        }
+    public @ResponseBody String signUpMember(@RequestParam String email, @RequestParam String memberName, @RequestParam String password) {
+
         if (!memberService.isEmailUsed(email)) {
             MemberEntity member = new MemberEntity();
             member.setMemberName(memberName);

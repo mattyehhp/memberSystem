@@ -1,4 +1,5 @@
 $('#signUpForm-submit').on('click', function() {
+
     $.ajax({
         url: '/membersystem/checkValidation',
         type: 'POST',
@@ -6,8 +7,8 @@ $('#signUpForm-submit').on('click', function() {
         data: {
             email: $('#sign-up-email').val(),
             memberName: $('#sign-up-membername').val(),
-            password: $('#sign-up-password').val()
-
+            password: $('#sign-up-password').val(),
+            kaptcha: $('#kaptcha').val()
         },
         success: function(res) {
 
@@ -27,8 +28,11 @@ $('#signUpForm-submit').on('click', function() {
             } else {
                 $('#small-member').hide();
             }
+            if (res.isVerifyCodeCorrect == 0) {
+                alert("Verify code is not correct!");
+            }
 
-            if (res.isMemberValid == 1) {
+            if (res.isMemberValid == 1 && res.isisVerifyCodeCorrect == 1) {
                 $.ajax({
                     url: '/membersystem/member/isUsed',
                     type: 'POST',
@@ -58,7 +62,6 @@ $('#signUpForm-submit').on('click', function() {
 
                 });
             }
-
         },
         error: function(error) {
             console.log(error);
