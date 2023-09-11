@@ -3,6 +3,7 @@ package com.mattyeh.memberSystem.controller;
 import com.mattyeh.memberSystem.entity.MemberEntity;
 import com.mattyeh.memberSystem.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +18,7 @@ public class MemberController {
 
 
     @PostMapping("/member")
+    @ResponseStatus(HttpStatus.CREATED)
     public @ResponseBody String signUpMember(@RequestParam String email, @RequestParam String memberName, @RequestParam String password) {
         if (!memberService.isEmailUsed(email)) {
             MemberEntity member = new MemberEntity();

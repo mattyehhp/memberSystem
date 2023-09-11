@@ -13,23 +13,50 @@ $('#signUpForm-submit').on('click', function() {
 
 
             if (res.isPasswordValid == 0) {
-                $('#small-password').html("請設定6個字元以上，首字母為英文的密碼").css("color", "red");
+                $('#small-password').html("請設定6個字元以上，首字母為英文的密碼").css("color", "red").show();
             } else {
                 $('#small-password').hide();
             }
             if (res.isEmailValid == 0) {
-                $('#small-email').html("請設定正確的電子信箱").css("color", "red");
+                $('#small-email').html("請設定正確的電子信箱").css("color", "red").show();
             } else {
                 $('#small-email').hide();
             }
             if (res.isMemberNameValid == 0) {
-                $('#small-member').html("請設定4個字元以上，首字母為英文的帳號").css("color", "red");
+                $('#small-member').html("請設定4個字元以上，首字母為英文的帳號").css("color", "red").show();
             } else {
                 $('#small-member').hide();
             }
 
             if (res.isMemberValid == 1) {
-                $('#submit-form').click();
+                $.ajax({
+                    url: '/membersystem/member/isUsed',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        email: $('#sign-up-email').val(),
+                        memberName: $('#sign-up-membername').val()
+                    },
+                    success: function(res) {
+                        if (res.isEmailUsed == 1) {
+                            $('#small-email').html("Email已被使用.").css("color", "red").show();
+                        } else {
+                            $('#small-email').hide();
+                        }
+                        if (res.isMemberNameUsed == 1) {
+                            $('#small-member').html("Member name已被使用").css("color", "red").show();
+                        } else {
+                            $('#small-member').hide();
+                        }
+                        if (res.isEmailUsed == 0 && res.isMemberNameUsed == 0) {
+                            $('#submit-form').click();
+                        }
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+
+                });
             }
 
         },
