@@ -1,7 +1,9 @@
 package com.mattyeh.memberSystem.controller;
 
+import com.google.code.kaptcha.Constants;
 import com.mattyeh.memberSystem.entity.MemberEntity;
 import com.mattyeh.memberSystem.service.MemberService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -19,7 +21,11 @@ public class MemberController {
 
     @PostMapping("/member")
     @ResponseStatus(HttpStatus.CREATED)
-    public @ResponseBody String signUpMember(@RequestParam String email, @RequestParam String memberName, @RequestParam String password) {
+    public @ResponseBody String signUpMember(@RequestParam String email, @RequestParam String memberName, @RequestParam String password, @RequestParam String kaptcha, HttpSession httpSession) {
+        String verifyCode = (String)httpSession.getAttribute(Constants.KAPTCHA_SESSION_KEY);
+        if (!verifyCode.equals(kaptcha)) {
+            return "failed";
+        }
         if (!memberService.isEmailUsed(email)) {
             MemberEntity member = new MemberEntity();
             member.setMemberName(memberName);

@@ -42,6 +42,12 @@
             <small class="form-text text-muted"><span id="small-confirm-password"></span></small>
         </div>
 
+        <div class="verify-code">
+            Enter Verify Code: <input name="kaptcha" type="text" maxlength="4">
+            <img th:src="@{/getVerifyImage}" id="kaptchaImg">
+            <a href="#" id="kaptchaLink">Click me to change code.</a>
+        </div>
+
         <button id="signUpForm-submit" type="button" class="btn btn-primary">Submit</button>
         <button id="submit-form" type="submit" class="invisible">hidebutton</button>
     </form>

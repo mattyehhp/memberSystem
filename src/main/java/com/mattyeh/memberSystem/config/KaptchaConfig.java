@@ -11,14 +11,14 @@ import java.util.Properties;
 public class KaptchaConfig {
 
     @Bean
-    public DefaultKaptcha DefaultKaptchaService() {
+    public DefaultKaptcha DefaultKaptchaBean() {
 
         DefaultKaptcha defaultKaptcha = new DefaultKaptcha();
         Properties properties = new Properties();
-        properties.put("kaptcha.image.width", "65");
-        properties.put("kaptcha.image.height", "30");
-        properties.put("kaptcha.textproducer.font.size", "25");
-        properties.put("kaptcha.textproducer.font.color", "red");
+        properties.put("kaptcha.image.width", "85");
+        properties.put("kaptcha.image.height", "40");
+        properties.put("kaptcha.textproducer.font.size", "28");
+        properties.put("kaptcha.textproducer.font.color", "blue");
         properties.put("kaptcha.textproducer.font.names", "Arial");
         properties.put("kaptcha.textproducer.char.length", "4");
         properties.put("kaptcha.obscurificator.impl", "com.google.code.kaptcha.impl.ShadowGimpy");
@@ -27,4 +27,6 @@ public class KaptchaConfig {
         defaultKaptcha.setConfig(config);
         return defaultKaptcha;
     }
+
+
 }

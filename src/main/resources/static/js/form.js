@@ -80,5 +80,17 @@ function confirmPassword() {
         $('#small-confirm-password').css("color", "red");
     }
 }
+
+function changeVerifyImgByLink() {
+
+    const pathName = document.location.pathname;
+    console.log(pathName.indexOf("/"));
+    const index = pathName.substring(1).indexOf("/");
+    const context = pathName.substring(0, index+1);
+
+    $('#kaptchaImg').hide().attr('src', context + '/getVerifyImage?' + Math.floor(Math.random()*100)).fadeIn();
+}
+
 $('#sign-up-password').on('blur', confirmPassword);
 $('#confirm-password').on('blur', confirmPassword);
+$('#kaptchaLink').on('click', changeVerifyImgByLink);
