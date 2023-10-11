@@ -1,5 +1,6 @@
 package com.mattyeh.memberSystem.controller;
 
+import com.google.code.kaptcha.Constants;
 import com.mattyeh.memberSystem.entity.MemberEntity;
 import com.mattyeh.memberSystem.service.MemberService;
 
@@ -23,24 +24,37 @@ public class LogInController {
     private MemberService memberService;
 
     @PostMapping("/login")
-    public String checkLogInMemberInfo(@RequestParam String memberName, @RequestParam String password, Model model, HttpServletRequest httpServletRequest) throws NoSuchAlgorithmException {
+    public String checkLogInMemberInfo(MemberEntity member, @RequestParam String kaptcha, Model model, HttpServletRequest httpServletRequest) throws NoSuchAlgorithmException {
+
+        HttpSession httpSession = httpServletRequest.getSession();
+        String verifyCode = (String)httpSession.getAttribute(Constants.KAPTCHA_SESSION_KEY);
+        httpSession.removeAttribute(Constants.KAPTCHA_SESSION_KEY);
+        if (verifyCode == null) {
+            model.addAttribute("error", "log in failed!");
+            log.info("model: {}", model);
+            return "result";
+        } else if (!verifyCode.equals(kaptcha)) {
+            model.addAttribute("error", "verifyCode is not correct!");
+            log.info("model: {}", model);
+            return "result";
+        }
+
         log.info("This is login post request");
-        MemberEntity memberFromRepository = memberService.getMemberByMemberName(memberName);
+        MemberEntity memberFromRepository = memberService.getMemberByMemberName(member.getMemberName());
         if (memberFromRepository == null) {
             model.addAttribute("error", "Member name is not found!");
             log.info("model: {}", model);
             return "result";
         }
 
-        password = EncryptUtils.encryptPassword(password);
+        String encryptedPassword = EncryptUtils.encryptPassword(member.getPassword());
 
-        if (!password.equals(memberFromRepository.getPassword())) {
+        if (!encryptedPassword.equals(memberFromRepository.getPassword())) {
             model.addAttribute("error", "password is wrong!");
             log.info("model: {}", model);
             return "result";
         } else {
             model.addAttribute("member", memberFromRepository);
-            HttpSession httpSession = httpServletRequest.getSession();
             httpSession.setAttribute("loginMember", memberFromRepository);
             log.info("model: {}", model);
             return "redirect:/service/home";

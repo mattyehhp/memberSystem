@@ -31,6 +31,7 @@ public class MemberController {
         log.info("kaptcha number: {}", kaptcha);
 
         String verifyCode = (String)httpSession.getAttribute(Constants.KAPTCHA_SESSION_KEY);
+        httpSession.removeAttribute(Constants.KAPTCHA_SESSION_KEY);
         if (verifyCode == null) {
 
             model.addAttribute("error", "sign up failed!");
@@ -42,10 +43,8 @@ public class MemberController {
             return "result";
         }
         if (!memberService.isEmailUsed(member.getEmail())) {
-            //密碼需Hash後再寫入資料庫，將來登入時也將使用者輸入的密碼Hash後與資料庫比對
+            //hash the password
             member.setPassword(EncryptUtils.encryptPassword(member.getPassword()));
-
-
             memberService.createMember(member);
             model.addAttribute("member", member);
             httpSession.setAttribute("loginMember", member);
@@ -69,7 +68,5 @@ public class MemberController {
         result.put("isMemberNameUsed", isMemberNameUsed);
         return result;
     }
-
-
 
 }
