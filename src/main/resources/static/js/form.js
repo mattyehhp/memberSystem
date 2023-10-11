@@ -32,7 +32,7 @@ $('#signUpForm-submit').on('click', function() {
                 alert("Verify code is not correct!");
             }
 
-            if (res.isMemberValid == 1 && res.isisVerifyCodeCorrect == 1) {
+            if (res.isMemberValid == 1 && res.isVerifyCodeCorrect == 1) {
                 $.ajax({
                     url: '/membersystem/member/isUsed',
                     type: 'POST',

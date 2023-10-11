@@ -27,6 +27,17 @@ public class MemberServiceImp implements MemberService {
     }
 
     @Override
+    public MemberEntity getMemberByMemberName(String memberName) {
+        List<MemberEntity> memberList = memberRepository.findMemberEntityByMemberName(memberName);
+        MemberEntity member = new MemberEntity();
+        if (memberList.size() > 0) {
+            member = memberList.get(0);
+        }
+        return member;
+    }
+
+
+    @Override
     public boolean isEmailUsed(String email) {
         boolean result = false;
         List<MemberEntity> memberList = memberRepository.findMemberEntityByEmail(email);
@@ -45,4 +56,6 @@ public class MemberServiceImp implements MemberService {
         }
         return result;
     }
+
+
 }

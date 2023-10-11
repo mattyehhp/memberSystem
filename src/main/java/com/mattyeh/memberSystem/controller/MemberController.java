@@ -3,16 +3,21 @@ package com.mattyeh.memberSystem.controller;
 import com.google.code.kaptcha.Constants;
 import com.mattyeh.memberSystem.entity.MemberEntity;
 import com.mattyeh.memberSystem.service.MemberService;
+import com.mattyeh.memberSystem.utils.EncryptUtils;
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
 @Controller
+@Slf4j
 public class MemberController {
 
     @Autowired
@@ -20,19 +25,36 @@ public class MemberController {
 
 
     @PostMapping("/member")
-    @ResponseStatus(HttpStatus.CREATED)
-    public @ResponseBody String signUpMember(@RequestParam String email, @RequestParam String memberName, @RequestParam String password) {
+    public String signUpMember(MemberEntity member, @RequestParam String kaptcha, HttpSession httpSession, Model model) throws NoSuchAlgorithmException {
 
-        if (!memberService.isEmailUsed(email)) {
-            MemberEntity member = new MemberEntity();
-            member.setMemberName(memberName);
-            member.setEmail(email);
+        log.info("signup member: {}", member.toString());
+        log.info("kaptcha number: {}", kaptcha);
+
+        String verifyCode = (String)httpSession.getAttribute(Constants.KAPTCHA_SESSION_KEY);
+        if (verifyCode == null) {
+
+            model.addAttribute("error", "sign up failed!");
+            log.info("model: {}", model);
+            return "result";
+        } else if (!verifyCode.equals(kaptcha)) {
+            model.addAttribute("error", "verifyCode is not correct!");
+            log.info("model: {}", model);
+            return "result";
+        }
+        if (!memberService.isEmailUsed(member.getEmail())) {
             //密碼需Hash後再寫入資料庫，將來登入時也將使用者輸入的密碼Hash後與資料庫比對
-            member.setPassword(password);
+            member.setPassword(EncryptUtils.encryptPassword(member.getPassword()));
+
+
             memberService.createMember(member);
-            return "Success";
+            model.addAttribute("member", member);
+            httpSession.setAttribute("loginMember", member);
+            log.info("model: {}", model);
+            return "redirect:service/home";
         } else {
-            return "Email is used";
+            model.addAttribute("error", "Email is used!");
+            log.info("model: {}", model);
+            return "result";
         }
     }
 
@@ -47,7 +69,6 @@ public class MemberController {
         result.put("isMemberNameUsed", isMemberNameUsed);
         return result;
     }
-
 
 
 

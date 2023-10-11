@@ -10,11 +10,11 @@
 <body style="background-color:#dda15e;">
 <div class="log-in d-flex w-75 vh-100 flex-column align-items-center mx-auto">
   <div class="log-in-label">Log In</div>
-  <form id="log-in-form" class="w-75" method="post" th:action="@{/member/login}">
+  <form id="log-in-form" class="w-75" method="post" th:action="@{/login}">
     <div class="form-group">
-      <label for="log-in-email">Email address</label>
-      <input type="email" class="form-control" id="log-in-email" aria-describedby="emailHelp"
-             placeholder="Enter email" name="email" required>
+      <label for="log-in-memberName">Member Name</label>
+      <input type="text" class="form-control" id="log-in-memberName" placeholder="Member Name" name="memberName"
+             required>
     </div>
 
     <div class="form-group">
@@ -22,8 +22,7 @@
       <input type="password" class="form-control" id="log-in-password" placeholder="Password" name="password"
              required>
     </div>
-    <button id="signUpForm-submit" type="button" class="btn btn-primary">Log in</button>
-    <button id="submit-form" type="submit" class="invisible">hidebutton</button>
+    <button id="log-in-submit" type="submit" class="btn btn-primary">Log in</button>
   </form>
   <div>
     <a th:href="@{/signup}">Sign Up</a>
